@@ -1,0 +1,13 @@
+{
+  "name": "audio-converter",
+  "displayName": "Audio Converter",
+  "version": "0.1.0",
+  "sdk": "0.1.0",
+  "permissions": [],
+  "dependencies": {},
+  "frontend": "dist/index.html",
+  "worker": {
+    "runtime": "python",
+    "entry": "converter.py"
+  }
+}
