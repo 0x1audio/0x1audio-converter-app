@@ -1,21 +1,10 @@
-import { useEffect, useState, type ReactNode } from "react"
+import { useEffect, useState } from "react"
 import { CheckCircleIcon, FileAudioIcon, FolderOpenIcon, UploadSimpleIcon, WarningCircleIcon, XIcon } from "@phosphor-icons/react"
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Combobox,
-  Label,
-  Progress,
-} from "@0x1audio/design-system"
+import { Badge, Button, Label, Progress } from "@0x1audio/design-system"
 import { host } from "@0x1audio/sdk/page"
 
 import { basename, channels, duration, rate, useDrop } from "./drop.ts"
-import { bitrates, channelOptions, depths, fallback, rates, type Format } from "./formats.ts"
+import { fallback, type Format } from "./formats.ts"
 
 interface Source {
   path: string
@@ -53,10 +42,6 @@ export function App() {
   const [formats, setFormats] = useState<Format[]>(fallback)
   const [files, setFiles] = useState<Source[]>([])
   const [chosen, setChosen] = useState<string[]>(["mp3"])
-  const [sampleRate, setSampleRate] = useState("keep")
-  const [channelCount, setChannelCount] = useState("keep")
-  const [depth, setDepth] = useState("24")
-  const [bitrate, setBitrate] = useState("320")
   const [output, setOutput] = useState("")
   const [job, setJob] = useState<{ id: string; state: Job } | null>(null)
   const [pending, setPending] = useState(false)
@@ -142,10 +127,6 @@ export function App() {
         files: ready.map((item) => item.path),
         formats: chosen,
         output,
-        rate: sampleRate === "keep" ? null : Number(sampleRate),
-        channels: channelCount === "keep" ? null : Number(channelCount),
-        depth,
-        bitrate: Number(bitrate),
       })
       for (;;) {
         const state = await bridge.call<Job>("status", { id: created.id })
@@ -171,8 +152,6 @@ export function App() {
   const ready = files.filter((item) => item.ok).length
   const lossless = formats.filter((item) => item.lossless)
   const lossy = formats.filter((item) => !item.lossless)
-  const wantsDepth = chosen.some((id) => lossless.some((item) => item.id === id))
-  const wantsBitrate = chosen.some((id) => lossy.some((item) => item.id === id))
   const state = job?.state
   const count = ready * chosen.length
 
@@ -226,62 +205,25 @@ export function App() {
         </ul>
       ) : null}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Formats</CardTitle>
-          <CardDescription>Each file is saved once for every format you pick.</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-5">
-          <FormatGroup label="Lossless" items={lossless} chosen={chosen} disabled={pending} onToggle={toggle} />
-          <FormatGroup label="Lossy" items={lossy} chosen={chosen} disabled={pending} onToggle={toggle} />
-        </CardContent>
-      </Card>
+      <section className="flex flex-col gap-5">
+        <FormatGroup label="Lossless" items={lossless} chosen={chosen} disabled={pending} onToggle={toggle} />
+        <FormatGroup label="Lossy" items={lossy} chosen={chosen} disabled={pending} onToggle={toggle} />
+      </section>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Quality</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-2 gap-4">
-          <Field label="Sample rate">
-            <Combobox items={rates} value={sampleRate} onValueChange={(value) => setSampleRate(value || "keep")} />
-          </Field>
-          <Field label="Channels">
-            <Combobox items={channelOptions} value={channelCount} onValueChange={(value) => setChannelCount(value || "keep")} />
-          </Field>
-          {wantsDepth ? (
-            <Field label="Bit depth">
-              <Combobox items={depths} value={depth} onValueChange={(value) => setDepth(value || "24")} />
-            </Field>
-          ) : null}
-          {wantsBitrate ? (
-            <Field label="Bitrate">
-              <Combobox items={bitrates} value={bitrate} onValueChange={(value) => setBitrate(value || "320")} />
-            </Field>
-          ) : null}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Output</CardTitle>
-          <CardDescription>Leave the folder empty to save next to each original. Nothing is overwritten.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-2">
-            <div className="flex h-10 min-w-0 flex-1 items-center rounded-lg bg-[var(--bg-field)] px-4 text-sm">
-              <span className="truncate text-muted-foreground">{output || "Same folder as each file"}</span>
-            </div>
-            {output ? (
-              <Button variant="outline" disabled={pending} onClick={() => setOutput("")}>
-                Reset
-              </Button>
-            ) : null}
-            <Button variant="outline" disabled={pending} onClick={() => void chooseFolder()}>
-              Choose
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex gap-2">
+        <div className="flex h-10 min-w-0 flex-1 items-center rounded-lg bg-card px-4 text-sm">
+          <span className="truncate text-muted-foreground">{output || "Saves next to each file"}</span>
+        </div>
+        {output ? (
+          <Button variant="outline" disabled={pending} onClick={() => setOutput("")}>
+            Reset
+          </Button>
+        ) : null}
+        <Button variant="outline" disabled={pending} onClick={() => void chooseFolder()}>
+          <FolderOpenIcon size={16} />
+          Folder
+        </Button>
+      </div>
 
       <div className="flex gap-2">
         <Button className="h-12 flex-1 text-base" disabled={pending || !count} onClick={() => void convert()}>
@@ -408,15 +350,6 @@ function FormatGroup({
           )
         })}
       </div>
-    </div>
-  )
-}
-
-function Field({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <Label>{label}</Label>
-      {children}
     </div>
   )
 }
