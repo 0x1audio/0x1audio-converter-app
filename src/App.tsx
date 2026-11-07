@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { CheckCircleIcon, FileAudioIcon, FolderOpenIcon, WarningCircleIcon, XIcon } from "@phosphor-icons/react"
-import { Badge, Button, Dropzone, Label, Progress, useFileDrop } from "@0x1audio/design-system"
+import { CheckCircleIcon, FileAudioIcon, WarningCircleIcon, XIcon } from "@phosphor-icons/react"
+import { Badge, Button, Dropzone, Label, Logo, Progress, useFileDrop } from "@0x1audio/design-system"
 import { host } from "@0x1audio/sdk/page"
 
 import lava from "./chroma-lava.jpg"
@@ -166,18 +166,19 @@ export function App() {
 
   return (
     <div className="relative min-h-svh bg-background text-foreground">
-      <header className="relative h-52">
+      <header className="relative h-32">
         <img src={lava} alt="" className="pointer-events-none absolute inset-0 size-full object-cover object-[center_22%]" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 from-25% to-background" />
-        <div className="absolute inset-x-6 bottom-1 flex flex-col items-center gap-2 text-center">
-          <h1 className="text-5xl font-medium tracking-tight text-balance">Audio Converter</h1>
-          <p className="text-sm text-muted-foreground">Convert audio to any format. Pick as many formats as you need.</p>
-        </div>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10 from-10% to-background" />
+        <Logo className="absolute top-4 left-6 h-5 text-white" />
       </header>
-      <main className="relative mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 pt-4 pb-10">
+      <main className="relative mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 pb-10">
+        <div className="flex flex-col items-center gap-2 pb-2 text-center">
+          <h1 className="text-4xl font-semibold tracking-tight text-balance">Audio Converter</h1>
+          <p className="text-sm text-muted-foreground">Make a copy for each format you pick.</p>
+        </div>
 
       <Dropzone
-        description="WAV, FLAC, MP3, AAC, Ogg, Opus, and anything else ffmpeg reads."
+        description="Most audio files. WAV, FLAC, MP3, and the rest."
         dragging={dragging}
         disabled={pending}
         onChoose={() => void chooseFiles()}
@@ -213,28 +214,31 @@ export function App() {
       ) : null}
 
       <section className="flex flex-col gap-5">
-        <FormatGroup label="Lossless" items={lossless} chosen={chosen} disabled={pending} onToggle={toggle} />
-        <FormatGroup label="Lossy" items={lossy} chosen={chosen} disabled={pending} onToggle={toggle} />
+        <FormatGroup label="Full quality" hint="Bigger files. The sound stays whole." items={lossless} chosen={chosen} disabled={pending} onToggle={toggle} />
+        <FormatGroup label="Smaller files" hint="Easier to share. A little of the sound is left out." items={lossy} chosen={chosen} disabled={pending} onToggle={toggle} />
+        <p className="text-sm text-muted-foreground">The two .m4a choices are different. ALAC keeps the whole sound. AAC is smaller.</p>
       </section>
 
-      <div className="flex gap-2">
-        <div className="flex h-10 min-w-0 flex-1 items-center rounded-lg bg-card px-4 text-sm">
-          <span className="truncate text-muted-foreground">{output || "Saves next to each file"}</span>
-        </div>
-        {output ? (
-          <Button variant="outline" disabled={pending} onClick={() => setOutput("")}>
-            Reset
-          </Button>
-        ) : null}
-        <Button variant="outline" disabled={pending} onClick={() => void chooseFolder()}>
-          <FolderOpenIcon size={16} />
-          Folder
+      <div className="flex items-center gap-3">
+        <span className="shrink-0 text-sm text-muted-foreground">Save to</span>
+        <span className="min-w-0 truncate text-sm" title={output || "Next to each file"}>{output ? basename(output) : "Next to each file"}</span>
+        <Button variant="outline" className="h-10 shrink-0" disabled={pending} onClick={() => void chooseFolder()}>
+          Choose folder
         </Button>
+        {output ? (
+          <button type="button" className="shrink-0 text-sm text-muted-foreground underline-offset-4 hover:underline" disabled={pending} onClick={() => setOutput("")}>
+            Next to each file
+          </button>
+        ) : null}
       </div>
 
       <div className="flex gap-2">
-        <Button className="h-12 flex-1 text-base" disabled={pending || !count} onClick={() => void convert()}>
-          {pending ? "Converting…" : count ? `Convert ${count} ${count === 1 ? "file" : "files"}` : "Convert"}
+        <Button
+          className={count ? "h-12 flex-1 text-base" : "h-12 flex-1 border border-border bg-transparent text-base text-foreground disabled:border-border disabled:bg-transparent disabled:text-foreground"}
+          disabled={pending || !count}
+          onClick={() => void convert()}
+        >
+          {pending ? "Converting…" : count ? "Convert" : "Add a song first"}
         </Button>
         {pending ? (
           <Button variant="outline" className="h-12 px-6 text-base" onClick={stop}>
@@ -325,12 +329,14 @@ function details(item: Source) {
 
 function FormatGroup({
   label,
+  hint,
   items,
   chosen,
   disabled,
   onToggle,
 }: {
   label: string
+  hint: string
   items: Format[]
   chosen: string[]
   disabled: boolean
@@ -340,6 +346,7 @@ function FormatGroup({
   return (
     <div className="flex flex-col gap-2">
       <Label>{label}</Label>
+      <p className="text-sm text-muted-foreground">{hint}</p>
       <div className="flex flex-wrap gap-2">
         {items.map((item) => {
           const on = chosen.includes(item.id)
