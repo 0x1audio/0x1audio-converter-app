@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
-import { CheckCircleIcon, FileAudioIcon, FolderOpenIcon, UploadSimpleIcon, WarningCircleIcon, XIcon } from "@phosphor-icons/react"
-import { Badge, Button, Label, Progress } from "@0x1audio/design-system"
+import { CheckCircleIcon, FileAudioIcon, FolderOpenIcon, WarningCircleIcon, XIcon } from "@phosphor-icons/react"
+import { Badge, Button, Dropzone, Label, Progress, useFileDrop } from "@0x1audio/design-system"
 import { host } from "@0x1audio/sdk/page"
 
 import lava from "./chroma-lava.jpg"
-import { basename, channels, duration, rate, useDrop } from "./drop.ts"
+import { basename, channels, duration, rate } from "./drop.ts"
 import { fallback, type Format } from "./formats.ts"
 
 interface Source {
@@ -48,7 +48,15 @@ export function App() {
   const [pending, setPending] = useState(false)
   const [message, setMessage] = useState("")
 
-  const dragging = useDrop((paths) => void add(paths), setMessage)
+  const dragging = useFileDrop((files) => {
+    const bridge = host()
+    if (!bridge?.pathFor) {
+      setMessage("Update 0x1audio to drop files here, or use Choose audio.")
+      return
+    }
+    const paths = files.map((file) => bridge.pathFor?.(file) ?? "").filter(Boolean)
+    if (paths.length) void add(paths)
+  })
 
   useEffect(() => {
     const bridge = host()
@@ -168,19 +176,12 @@ export function App() {
       </header>
       <main className="relative mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 pt-4 pb-10">
 
-      <section
-        className={`flex flex-col items-center justify-center gap-3 rounded-2xl px-6 py-10 text-center ${dragging ? "bg-[var(--bg-field)]" : "bg-card"}`}
-      >
-        <UploadSimpleIcon size={32} className="text-muted-foreground" />
-        <div className="flex flex-col gap-1">
-          <p className="font-medium">{dragging ? "Drop to add" : "Drop audio here"}</p>
-          <p className="text-sm text-muted-foreground">WAV, FLAC, MP3, AAC, Ogg, Opus, and anything else ffmpeg reads.</p>
-        </div>
-        <Button variant="outline" disabled={pending} onClick={() => void chooseFiles()}>
-          <FolderOpenIcon size={16} />
-          Choose audio
-        </Button>
-      </section>
+      <Dropzone
+        description="WAV, FLAC, MP3, AAC, Ogg, Opus, and anything else ffmpeg reads."
+        dragging={dragging}
+        disabled={pending}
+        onChoose={() => void chooseFiles()}
+      />
 
       {files.length ? (
         <ul className="flex flex-col gap-2">
