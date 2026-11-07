@@ -3,6 +3,7 @@ import { CheckCircleIcon, FileAudioIcon, FolderOpenIcon, UploadSimpleIcon, Warni
 import { Badge, Button, Label, Progress } from "@0x1audio/design-system"
 import { host } from "@0x1audio/sdk/page"
 
+import lava from "./chroma-lava.jpg"
 import { basename, channels, duration, rate, useDrop } from "./drop.ts"
 import { fallback, type Format } from "./formats.ts"
 
@@ -156,11 +157,16 @@ export function App() {
   const count = ready * chosen.length
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-10 text-foreground">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-xl font-medium">Audio Converter</h1>
-        <p className="text-sm text-muted-foreground">Convert audio to any format. Pick as many formats as you need.</p>
+    <div className="relative min-h-svh bg-background text-foreground">
+      <header className="relative h-52">
+        <img src={lava} alt="" className="pointer-events-none absolute inset-0 size-full object-cover object-[center_22%]" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 from-25% to-background" />
+        <div className="absolute inset-x-6 bottom-1 flex flex-col items-center gap-2 text-center">
+          <h1 className="text-5xl font-medium tracking-tight text-balance">Audio Converter</h1>
+          <p className="text-sm text-muted-foreground">Convert audio to any format. Pick as many formats as you need.</p>
+        </div>
       </header>
+      <main className="relative mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 pt-4 pb-10">
 
       <section
         className={`flex flex-col items-center justify-center gap-3 rounded-2xl px-6 py-10 text-center ${dragging ? "bg-[var(--bg-field)]" : "bg-card"}`}
@@ -272,7 +278,8 @@ export function App() {
           ))}
         </ul>
       ) : null}
-    </main>
+      </main>
+    </div>
   )
 }
 
