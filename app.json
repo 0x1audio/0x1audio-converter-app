@@ -5,6 +5,7 @@
   "summary": "One file to many formats at once.",
   "version": "0.3.0",
   "sdk": "^0.3",
+  "license": "Apache-2.0",
   "entry": "app.py",
   "permissions": {
     "files": "Open the songs you choose and save the copies next to them.",
