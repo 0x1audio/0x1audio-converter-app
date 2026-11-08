@@ -20,10 +20,13 @@ def convert(
         ox.progress(i / len(steps), label)
         # Next to the song, unless it came from Open with (read-only): then the copy goes to the Library.
         target = folder or ox.beside(path)
-        if EXTENSIONS.get(path.suffix.lower()) == kind and (target is None or Path(target) == path.parent):
-            # Already that format: the song itself is the copy, so no "song 2.wav".
-            made.append(ox.sound(path, title=path.stem))
-            continue
+        if EXTENSIONS.get(path.suffix.lower()) == kind:
+            if target is None:
+                continue  # From Open with, already this format: it's in the Library as it is.
+            if Path(target) == path.parent:
+                # Already that format, right here: the song itself is the copy, so no "song 2.wav".
+                made.append(ox.sound(path, title=path.stem))
+                continue
         out = ox.audio.convert(
             path,
             kind,
@@ -31,4 +34,6 @@ def convert(
             on_progress=lambda fraction, i=i, label=label: ox.progress((i + fraction) / len(steps), label),
         )
         made.append(ox.sound(out, title=path.stem))
+    if not made:
+        raise ox.Problem("Your Library already has this in that format.", hint="Choose another format.")
     return made

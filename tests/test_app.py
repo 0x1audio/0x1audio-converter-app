@@ -57,6 +57,13 @@ class ConvertTest(unittest.TestCase):
         self.assertTrue(all(Path(item["path"]).parent != self.folder for item in run["items"]))
         self.assertEqual(sorted(path.name for path in self.folder.iterdir()), ["song.wav"])
 
+    def test_open_with_in_the_format_it_already_is_makes_no_copy(self):
+        run = ox.test(app.convert, open_with=[self.song], formats=["wav", "mp3"])
+        self.assertEqual([Path(item["path"]).suffix for item in run["items"]], [".mp3"])
+        with self.assertRaises(ox.Problem) as caught:
+            ox.test(app.convert, open_with=[self.song], formats=["wav"])
+        self.assertEqual(str(caught.exception), "Your Library already has this in that format.")
+
     def test_a_chosen_folder_still_wins_after_open_with(self):
         out = self.folder / "out"
         out.mkdir()
