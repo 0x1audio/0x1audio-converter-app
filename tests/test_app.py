@@ -50,6 +50,19 @@ class ConvertTest(unittest.TestCase):
         run = ox.test(app.convert, files=[self.song], formats=["opus"], folder=out)
         self.assertEqual(Path(run["items"][0]["path"]).parent, out)
 
+    def test_a_song_from_open_with_is_never_written_next_to(self):
+        # Open with hands over one read-only file (GAB-46): the copies go to the Library, not its folder.
+        run = ox.test(app.convert, open_with=[self.song], formats=["flac", "mp3"])
+        self.assertEqual(sorted(Path(item["path"]).name for item in run["items"]), ["song.flac", "song.mp3"])
+        self.assertTrue(all(Path(item["path"]).parent != self.folder for item in run["items"]))
+        self.assertEqual(sorted(path.name for path in self.folder.iterdir()), ["song.wav"])
+
+    def test_a_chosen_folder_still_wins_after_open_with(self):
+        out = self.folder / "out"
+        out.mkdir()
+        run = ox.test(app.convert, open_with=[self.song], formats=["mp3"], folder=out)
+        self.assertEqual(Path(run["items"][0]["path"]).parent, out)
+
     def test_every_format_is_one_this_computer_can_write(self):
         for kind in app.FORMATS:
             with self.subTest(kind=kind):
@@ -61,7 +74,7 @@ class ConvertTest(unittest.TestCase):
         notes.write_text("not audio")
         with self.assertRaises(ox.Problem) as caught:
             ox.test(app.convert, files=[notes], formats=["mp3"])
-        self.assertEqual(str(caught.exception), "notes.wav isn't a sound file 0x1audio can open.")
+        self.assertEqual(str(caught.exception), "notes.wav isn't a sound file Mixel can open.")
 
 
 if __name__ == "__main__":

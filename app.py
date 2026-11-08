@@ -18,14 +18,16 @@ def convert(
     for i, (path, kind) in enumerate(steps):
         label = f"{path.name} to {FORMATS[kind]}"
         ox.progress(i / len(steps), label)
-        if EXTENSIONS.get(path.suffix.lower()) == kind and (folder is None or Path(folder) == path.parent):
-            # Already that format, right here: the song itself is the copy, so no "song 2.wav".
+        # Next to the song, unless it came from Open with (read-only): then the copy goes to the Library.
+        target = folder or ox.beside(path)
+        if EXTENSIONS.get(path.suffix.lower()) == kind and (target is None or Path(target) == path.parent):
+            # Already that format: the song itself is the copy, so no "song 2.wav".
             made.append(ox.sound(path, title=path.stem))
             continue
         out = ox.audio.convert(
             path,
             kind,
-            folder=folder or path.parent,
+            folder=target,
             on_progress=lambda fraction, i=i, label=label: ox.progress((i + fraction) / len(steps), label),
         )
         made.append(ox.sound(out, title=path.stem))
