@@ -11,6 +11,7 @@ The whole app is `app.py`: one `@ox.action`. 0x1audio draws its window from the 
 ## Develop
 
 ```sh
-ox check
-uv run --group dev python -m unittest
+mixel check
+mixel test
+mixel dev     # opens it in 0x1audio and reloads it on save
 ```
