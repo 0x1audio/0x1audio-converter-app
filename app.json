@@ -1,12 +1,16 @@
 {
+  "$schema": "https://0x1audio.com/schema/app/v1.json",
   "name": "audio-converter",
   "displayName": "Audio Converter",
+  "summary": "One file to many formats at once.",
+  "version": "0.3.0",
+  "sdk": "^0.3",
+  "entry": "app.py",
+  "permissions": {
+    "files": "Open the songs you choose and save the copies next to them.",
+    "library": "Add the converted copies to your Library."
+  },
   "accent": "#20b4c4",
   "icon": "icon.svg",
-  "version": "0.2.0",
-  "sdk": "0.2.0",
-  "worker": {
-    "runtime": "python",
-    "entry": "app.py"
-  }
+  "tags": ["convert"]
 }

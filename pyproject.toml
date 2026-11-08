@@ -1,17 +1,11 @@
 [project]
 name = "audio-converter"
-version = "0.1.1"
-requires-python = ">=3.13"
-dependencies = [
-  "imageio-ffmpeg>=0.6",
-]
+version = "0.3.0"
+requires-python = ">=3.11"
+dependencies = []
 
 [dependency-groups]
-dev = [
-  "numpy>=2.1",
-  "soundfile>=0.13",
-  "ox1audio",
-]
+dev = ["ox1audio"]
 
 [tool.uv.sources]
 ox1audio = { path = "../0x1audio-sdk-py" }

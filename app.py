@@ -1,18 +1,24 @@
 import ox1audio as ox
-from pathlib import Path
+
+FORMATS = {"wav": "WAV", "aiff": "AIFF", "flac": "FLAC", "mp3": "MP3", "aac": "AAC", "ogg": "Ogg", "opus": "Opus"}
 
 
-@ox.screen("Audio Converter")
-def convert(files: ox.Files, format: ox.Choice("wav", "aiff", "flac", "mp3", "aac", "ogg", "opus")):
-    paths = files if isinstance(files, list) else []
-    total = max(len(paths), 1)
-    for index, audio in enumerate(paths):
-        source = Path(str(audio))
-        yield ox.progress(index / total, source.stem)
-        out = ox.audio.convert(str(source), str(format))
-        yield ox.sound(out, title=source.stem)
-    yield ox.progress(1, "Done")
-
-
-if __name__ == "__main__":
-    ox.run()
+@ox.action("Convert")
+def convert(
+    files: ox.Files("audio"),
+    formats: ox.Choice(*FORMATS, multiple=True),
+    folder: ox.Folder(label="Save to") | None = None,
+):
+    steps = [(path, kind) for path in files for kind in formats]
+    made = []
+    for i, (path, kind) in enumerate(steps):
+        label = f"{path.name} to {FORMATS[kind]}"
+        ox.progress(i / len(steps), label)
+        out = ox.audio.convert(
+            path,
+            kind,
+            folder=folder or path.parent,
+            on_progress=lambda fraction, i=i, label=label: ox.progress((i + fraction) / len(steps), label),
+        )
+        made.append(ox.sound(out, title=path.stem))
+    return made
