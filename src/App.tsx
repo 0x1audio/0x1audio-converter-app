@@ -51,7 +51,7 @@ export function App() {
   const dragging = useFileDrop((files) => {
     const bridge = host()
     if (!bridge?.pathFor) {
-      setMessage("Update 0x1audio to drop files here, or use Choose audio.")
+      setMessage("Update 0x1audio to drop files here, or browse your Library.")
       return
     }
     const paths = files.map((file) => bridge.pathFor?.(file) ?? "").filter(Boolean)
@@ -88,16 +88,6 @@ export function App() {
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not read those files.")
     }
-  }
-
-  async function chooseFiles() {
-    const bridge = host()
-    if (!bridge?.pick) {
-      setMessage("Open this app in 0x1audio.")
-      return
-    }
-    const picked = await bridge.pick("file")
-    if (picked.length) await add(picked)
   }
 
   async function chooseFolder() {
@@ -180,7 +170,8 @@ export function App() {
         description="WAV, FLAC, MP3, AAC, Ogg, Opus, and anything else ffmpeg reads."
         dragging={dragging}
         disabled={pending}
-        onChoose={() => void chooseFiles()}
+        multiple
+        onChoose={(paths) => void add(paths)}
       />
 
       {files.length ? (
