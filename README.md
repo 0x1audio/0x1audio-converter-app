@@ -15,3 +15,9 @@ mixel check
 mixel test
 mixel dev     # opens it in Mixel and reloads it on save
 ```
+
+## Licence
+
+Apache-2.0 · contributions under the [DCO](CONTRIBUTING.md#sign-off-your-commits-dco).
+
+This app is open source under the [Apache License 2.0](LICENSE); see also [NOTICE](NOTICE). The licence covers the code, not the name: "Mixel" and its marks are trademarks of 0x1audio, and [TRADEMARKS.md](https://github.com/0x1audio/cloud/blob/main/TRADEMARKS.md) explains how to use them. To report a vulnerability, see [SECURITY.md](SECURITY.md).
