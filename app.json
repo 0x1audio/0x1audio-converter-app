@@ -3,7 +3,7 @@
   "name": "audio-converter",
   "displayName": "Audio Converter",
   "summary": "One file to many formats at once.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "sdk": "^0.3",
   "license": "Apache-2.0",
   "entry": "app.py",
@@ -11,7 +11,7 @@
     "files": "Open the songs you choose and save the copies next to them.",
     "library": "Add the converted copies to your Library."
   },
-  "accent": "#20b4c4",
+  "accent": "#00a7af",
   "icon": "icon.svg",
   "tags": ["convert"]
 }
