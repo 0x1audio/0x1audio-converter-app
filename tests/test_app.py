@@ -24,7 +24,10 @@ class ConvertTest(unittest.TestCase):
         names = sorted(Path(item["path"]).name for item in run["items"])
         self.assertEqual(names, ["song.flac", "song.mp3", "song.wav"])
         self.assertTrue(all(Path(item["path"]).parent == self.folder for item in run["items"]))
-        self.assertEqual({item["title"] for item in run["items"]}, {"song"})
+        titles = {Path(item["path"]).suffix: item["title"] for item in run["items"]}
+        self.assertEqual(titles, {".flac": "song", ".mp3": "song", ".wav": "song (already WAV)"}, "the song itself is named as such (GAB-152)")
+        for item in run["items"]:
+            self.assertAlmostEqual(item["metadata"]["duration"], ox.audio.probe(item["path"]).duration, delta=0.05)
         self.assertEqual(run["progress"][-1][1], "song.wav to MP3")  # formats run in the order they are offered
 
     def test_the_format_a_song_already_is_makes_no_second_copy(self):

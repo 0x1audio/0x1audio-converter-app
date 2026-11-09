@@ -3,7 +3,7 @@
   "name": "audio-converter",
   "displayName": "Audio Converter",
   "summary": "One file to many formats at once.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "sdk": "^0.3",
   "license": "Apache-2.0",
   "entry": "app.py",

@@ -25,7 +25,8 @@ def convert(
                 continue  # From Open with, already this format: it's in the Library as it is.
             if Path(target) == path.parent:
                 # Already that format, right here: the song itself is the copy, so no "song 2.wav".
-                made.append(ox.sound(path, title=path.stem))
+                # Its title says so, so nobody thinks it was converted or written over (GAB-152).
+                made.append(ox.sound(path, title=f"{path.stem} (already {FORMATS[kind]})", duration=_length(path)))
                 continue
         out = ox.audio.convert(
             path,
@@ -33,7 +34,15 @@ def convert(
             folder=target,
             on_progress=lambda fraction, i=i, label=label: ox.progress((i + fraction) / len(steps), label),
         )
-        made.append(ox.sound(out, title=path.stem))
+        # The length comes with the copy, so the result row shows it before the Library has measured it.
+        made.append(ox.sound(out, title=path.stem, duration=_length(out)))
     if not made:
         raise ox.Problem("Your Library already has this in that format.", hint="Choose another format.")
     return made
+
+
+def _length(path) -> float | None:
+    try:
+        return round(ox.audio.probe(path).duration, 3) or None
+    except Exception:
+        return None
