@@ -12,7 +12,7 @@ Thank you for helping with Audio Converter, an official Mixel app. A good bug re
 
 You build against the Mixel you already use, with the `mixel` command. You don't need Mixel's own source code. You need:
 
-- **Mixel**, from [0x1audio.com](https://0x1audio.com).
+- **Mixel**, on a Mac with macOS 14 or later, from [0x1audio.com/download](https://0x1audio.com/download).
 - **[uv](https://docs.astral.sh/uv/getting-started/installation/)**, which brings its own Python.
 
 In Mixel, turn on **Settings › Developer mode**, then quit and reopen Mixel. Install the `mixel` command once, and open your clone in Mixel:
@@ -23,6 +23,12 @@ git clone https://github.com/0x1audio/0x1audio-converter-app.git 0x1audio-conver
 cd 0x1audio-converter-app
 mixel doctor   # says what's missing, if anything
 mixel dev      # opens it in Mixel and reloads it on save
+```
+
+Until `ox1audio` is on PyPI, install the `mixel` command from the copy inside Mixel instead. Mixel unpacks it the first time it opens an app, such as Audio Converter; if there's more than one version, use the newest:
+
+```bash
+uv tool install ~/Library/Application\ Support/0x1audio/runtimes/ox1audio-*/ox1audio-*.whl
 ```
 
 `mixel dev` opens your copy in Mixel, marked **In development**. It reloads when you save, and prints the app's log and errors in your terminal. Press Ctrl-C to close it.
