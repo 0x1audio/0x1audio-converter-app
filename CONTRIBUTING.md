@@ -10,14 +10,22 @@ Thank you for helping with Audio Converter, an official Mixel app. A good bug re
 
 ## Set up
 
-Install the `mixel` command once, then work in this folder:
+You build against the Mixel you already use, with the `mixel` command. You don't need Mixel's own source code. You need:
+
+- **Mixel**, from [0x1audio.com](https://0x1audio.com).
+- **[uv](https://docs.astral.sh/uv/getting-started/installation/)**, which brings its own Python.
+
+In Mixel, turn on **Settings › Developer mode**, then quit and reopen Mixel. Install the `mixel` command once, and open your clone in Mixel:
 
 ```bash
 uv tool install ox1audio
 git clone https://github.com/0x1audio/0x1audio-converter-app.git 0x1audio-converter-app
 cd 0x1audio-converter-app
-mixel dev     # opens it in Mixel and reloads it on save
+mixel doctor   # says what's missing, if anything
+mixel dev      # opens it in Mixel and reloads it on save
 ```
+
+`mixel dev` opens your copy in Mixel, marked **In development**. It reloads when you save, and prints the app's log and errors in your terminal. Press Ctrl-C to close it.
 
 `AGENTS.md` is generated from the contract in the Python SDK. Don't edit it by hand.
 
@@ -26,9 +34,11 @@ mixel dev     # opens it in Mixel and reloads it on save
 Run these before you open a pull request:
 
 ```bash
-mixel check   # app.json and the action, the way Mixel reads them
+mixel check   # app.json and the action, the way Mixel and its reviewers read them
 mixel test    # the tests in tests/
 ```
+
+`mixel run convert --file tests/tone.wav --set 'formats=["flac","mp3"]' --out /tmp/converted` runs the action on a real file without opening Mixel, and leaves the result for you to listen to.
 
 ## Pull requests
 
