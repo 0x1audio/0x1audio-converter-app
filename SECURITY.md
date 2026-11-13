@@ -15,7 +15,7 @@ Tell us what you found, the steps to reproduce it, what an attacker could do wit
 
 - **File handling:** writing outside the folder the person chose, overwriting a file, or a crafted file name or audio file that makes the converter do something else.
 
-The desktop sandbox, file access, registry review, and the API and auth live in the Mixel cloud, and its [SECURITY.md](https://github.com/0x1audio/cloud/blob/main/SECURITY.md) covers them. If you're not sure where something belongs, report it here and we'll pass it on.
+The desktop sandbox, file access, registry review, and the API and auth live in Mixel itself, the app and the cloud, and [Mixel's security policy](https://0x1audio.com/security) covers them. If you're not sure where something belongs, report it here and we'll pass it on.
 
 Not in scope: denial of service by volume, spam, social engineering, scanner output without a way to cause harm, and bugs in dependencies (report those upstream, and tell us if we're affected).
 
