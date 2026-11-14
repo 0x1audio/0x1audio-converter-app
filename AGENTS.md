@@ -69,7 +69,7 @@ class ConvertTest(unittest.TestCase):
   "accent": "#20b4c4"
 }
 ```
-- Permissions are binding: `files` (Files and Folder controls), `library` (returning sounds), `data` (`ox.data`), `gpu` (torch, onnxruntime), `network` as `{"why": "…", "hosts": ["example.com"]}`. Ask only for what the code uses. Each reason is one sentence (12–120 characters) telling the person why.
+- Permissions are binding: `files` (Files and Folder controls), `library` (returning sounds), `library-read` (a page lists it), `data` (`ox.data`), `gpu` (torch, onnxruntime), `network` as `{"why": "…", "hosts": ["example.com"]}`. Ask only for what the code uses. Each reason: one sentence (12–120 chars) saying why.
 - Optional: `icon` (a square `.svg`/`.png` in the app), `window` (`{"width", "height", "minWidth", "minHeight"}`), `tags` (up to 5), `license` (SPDX), `page` (below).
 - Raise `version` before each release. Never change `name`.
 
@@ -77,15 +77,15 @@ class ConvertTest(unittest.TestCase):
 Python packages go in `pyproject.toml` › `[project].dependencies`, wheels only; Mixel installs only those (`mixel check --fix` adds what the code imports, then runs `uv sync`; commit uv.lock). numpy and scipy are fine. The SDK already has ffmpeg; don't add ffmpeg wrappers, pydub, or requests. Never commit models, songs or files over 5 MB.
 
 ## A page (only when the drawn form is not enough)
-`mixel new --page` adds one: Vite + React, built to `dist/index.html`. It uses `@0x1audio/design-system` and the same actions:
+`mixel new --page` adds one: Vite + React, built to `dist/index.html`. It uses `@ox1audio/design-system` and the same actions:
 ```tsx
-import { ox } from "@0x1audio/sdk/page"
-import { ActionForm } from "@0x1audio/design-system"
+import { ox } from "@ox1audio/sdk/page"
+import { ActionForm } from "@ox1audio/design-system"
 
 export const App = () => <ActionForm action="convert" />   // the form Mixel draws; build around it
 // your own controls: await ox.run("convert", { files, format }, { onProgress: (f, label) => {}, onEvent: (name, body) => {}, signal })
 ```
-Page API: `ox.run`, `ox.actions`, `ox.files.pick / fromDrop / read / reveal`, `ox.library.list / add / file / onChange`, `ox.data.*`, `ox.app.open`. Errors are `OxError` with `.code` (`cancelled` after Stop, with `.kept`). `ox.emit("partial", body)` in Python reaches `onEvent`. Use design-system components and tokens only, no hex colours. Mixel sets `.dark` on `<html>`: check both.
+Page API: `ox.run`, `ox.actions`, `ox.files.pick / fromDrop / read / reveal`, `ox.library.list / add / file / onChange`, `ox.data.*`, `ox.app.open`. Errors are `OxError` with `.code` (`cancelled` after Stop, with `.kept`). `ox.emit("partial", body)` in Python reaches `onEvent`. Design-system components and tokens only, no hex colours. Mixel sets `.dark` on `<html>`: check both.
 
 ## Words (what the person sees)
 Say what it does for a musician: song, sound, file, folder, Library. Never: worker, manifest, SDK, ffmpeg. Sentence case. Buttons are verbs. No exclamation marks. Errors say what happened, then what to do.

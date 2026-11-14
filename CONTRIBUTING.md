@@ -16,7 +16,7 @@ You build against the Mixel you already use, with the `mixel` command. You don't
 - **Mixel**, on a Mac with macOS 14 or later, from [0x1audio.com/download](https://0x1audio.com/download).
 - **[uv](https://docs.astral.sh/uv/getting-started/installation/)**, which brings its own Python.
 
-In Mixel, turn on **Settings › Developer mode**, then quit and reopen Mixel. Install the `mixel` command once, and open your clone in Mixel:
+In Mixel, turn on **Settings › Developer mode**, then quit and reopen Mixel. Install the `mixel` command once (it's [`ox1audio`](https://pypi.org/project/ox1audio/) on PyPI), and open your clone in Mixel:
 
 ```bash
 uv tool install ox1audio
@@ -26,15 +26,11 @@ mixel doctor   # says what's missing, if anything
 mixel dev      # opens it in Mixel and reloads it on save
 ```
 
-Until `ox1audio` is on PyPI, install the `mixel` command from the copy inside Mixel instead. Mixel unpacks it the first time it opens an app, such as Audio Converter; if there's more than one version, use the newest:
-
-```bash
-uv tool install ~/Library/Application\ Support/0x1audio/runtimes/ox1audio-*/ox1audio-*.whl
-```
-
 `mixel dev` opens your copy in Mixel, marked **In development**. It reloads when you save, and prints the app's log and errors in your terminal. Press Ctrl-C to close it.
 
 `AGENTS.md` is generated from the contract in the Python SDK. Don't edit it by hand.
+
+Audio Converter has no page of its own: Mixel draws its form from the action. If you give it one, the page builds with the page SDK ([`@ox1audio/sdk`](https://www.npmjs.com/package/@ox1audio/sdk)) and Mixel's design system ([`@ox1audio/design-system`](https://www.npmjs.com/package/@ox1audio/design-system)), both on npm.
 
 ## Run the checks
 
